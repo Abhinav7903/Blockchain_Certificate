@@ -141,7 +141,8 @@ loadAccounts()
 		certificateForm.addEventListener('submit', (e) => {
 			e.preventDefault();
 			const name = document.querySelector('#name').value;
-			contract.methods.addUser(name).send({ from: accounts[0] })
+			const fromAddress = accounts[0];
+			contract.methods.addUser(name).send({ from: fromAddress })
 				.then((result) => {
 					console.log(result);
 					//print only transcation hash
