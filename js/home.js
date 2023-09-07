@@ -3,7 +3,7 @@ import { auth, onAuthStateChanged, signOut, doc, where, query, collection, setDo
 onAuthStateChanged(auth, (user) => {
 	if (user) {
 		const currentUid = user.uid;
-		console.log("User is signed in with UID:", currentUid);
+		// console.log("User is signed in with UID:", currentUid);
 
 		// Define references to the Firestore collections
 		const usersCollection = collection(firestore, "users");
@@ -33,29 +33,46 @@ onAuthStateChanged(auth, (user) => {
 
 	// Define references to the Firestore collections
 	const currentUid = user.uid;
+const certifiCollection = collection(firestore, "certificates");
+const certifiQuery = query(certifiCollection, where("u_id", "==", currentUid));
 
-	const certifiCollection = collection(firestore, "certificates");
-	const certifiQuery = query(certifiCollection, where("u_id", "==", currentUid));
-	getDocs(certifiQuery)
-		.then((certifiQuerySnapshot) => {
-			if (!certifiQuerySnapshot.empty) {
-				// User exists, fetch their username,hash,uid
-				const certifi = certifiQuerySnapshot.docs[0].data().transactionHash;
-				const cert_namee = certifiQuerySnapshot.docs[0].data().name;
+getDocs(certifiQuery)
+  .then((certifiQuerySnapshot) => {
+    if (!certifiQuerySnapshot.empty) {
+      // Initialize an array to store all certificates
+      const certificates = [];
 
+      // Loop through each certificate document
+      certifiQuerySnapshot.forEach((doc) => {
+        const certifiData = doc.data();
+        const certifi = certifiData.transactionHash;
+        const cert_namee = certifiData.name;
 
-				console.log("Certificate:", certifi);
-				console.log("Certificate:", cert_namee);
-				document.getElementById("certificateOutputname").innerHTML = cert_namee;
+        // Push the certificate data to the array
+        certificates.push({ transactionHash: certifi, name: cert_namee });
+      });
 
-				document.getElementById("certificateOutput").innerHTML = certifi;
-			} else {
-				console.log("No certificate exists with this UID.");
-			}
-		}).catch((certifiError) => {
-			console.error("Error getting certificate document:", certifiError);
-		}
-		);
+      // Now you have all certificates in the 'certificates' array
+    //   console.log("Certificates:", certificates);
+	  document.getElementById("certificateOutput").innerHTML = certificates.map((certificate) => {
+		return `<div class="card">
+		<div class="card-body">
+		  <h5 class="card-title">${certificate.name}</h5>
+		  <p class="card-text">Transaction Hash: ${certificate.transactionHash}</p>
+		  </div>
+		  	
+		 </div>`;
+	  }).join("");
+
+      // If you want to display them on a web page, you can loop through the array and update the DOM.
+    } else {
+      console.log("No certificates exist with this UID.");
+    }
+  })
+  .catch((certifiError) => {
+    console.error("Error getting certificate documents:", certifiError);
+  });
+
 });
 
 
@@ -127,7 +144,7 @@ const contractABI =[
 			{
 				"internalType": "string",
 				"name": "name",
-				"type": "string"
+				"type": "string" 
 			}
 		],
 		"name": "createCertificate",
