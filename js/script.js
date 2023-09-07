@@ -1,4 +1,4 @@
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, firestore, collection, getDocs, setDoc, doc, } from "./app.js";
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, firestore, collection, getDocs, setDoc, doc, } from "./obfuscated.js";
 
 
 

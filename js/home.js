@@ -1,4 +1,4 @@
-import { auth, onAuthStateChanged, signOut, doc, where, query, collection, setDoc, getDocs, firestore } from "./app.js";
+import { auth, onAuthStateChanged, signOut, doc, where, query, collection, setDoc, getDocs, firestore } from "./obfuscated.js";
 
 onAuthStateChanged(auth, (user) => {
 	if (user) {
@@ -19,10 +19,10 @@ onAuthStateChanged(auth, (user) => {
 					const username = userQuerySnapshot.docs[0].data().name;
 					console.log("Username:", username);
 					document.getElementById("user_name").innerHTML = username;
-				} else {	
+				} else {
 					console.log("No user exists with this UID.");
 				}
-		})
+			})
 			.catch((userError) => {
 				console.error("Error getting user document:", userError);
 			});
@@ -41,20 +41,21 @@ onAuthStateChanged(auth, (user) => {
 			if (!certifiQuerySnapshot.empty) {
 				// User exists, fetch their username,hash,uid
 				const certifi = certifiQuerySnapshot.docs[0].data().transactionHash;
-				const cert_namee=certifiQuerySnapshot.docs[0].data().name;
+				const cert_namee = certifiQuerySnapshot.docs[0].data().name;
+
 
 				console.log("Certificate:", certifi);
 				console.log("Certificate:", cert_namee);
-				document.getElementById("certificateOutputname").innerHTML =cert_namee ;
+				document.getElementById("certificateOutputname").innerHTML = cert_namee;
 
 				document.getElementById("certificateOutput").innerHTML = certifi;
-			} else {	
+			} else {
 				console.log("No certificate exists with this UID.");
 			}
 		}).catch((certifiError) => {
 			console.error("Error getting certificate document:", certifiError);
 		}
-	);
+		);
 });
 
 
@@ -87,33 +88,96 @@ else {
 }
 
 
-// Initialize Web3.js
-// const web3 = new Web3(window.ethereum); // Replace with your local node's URL
-
-// Initialize web3js on ganche local node
-// const web3 = new Web3('http://127.0.0.1:8545');
+// // Initialize web3 instance
 
 // const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
 const web3 = new Web3(window.ethereum);
 
 
 // Initialize the contract instance	
-const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const contractABI = [
+const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+const contractABI =[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "certificateId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "userId",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "CertificateCreated",
+		"type": "event"
+	},
 	{
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "_name",
+				"name": "name",
 				"type": "string"
 			}
 		],
-		"name": "addUser",
+		"name": "createCertificate",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "certificateCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "certificates",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "certificateId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "userId",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
-];
+]
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 // Get the accounts
@@ -142,7 +206,7 @@ loadAccounts()
 			e.preventDefault();
 			const name = document.querySelector('#name').value;
 			const fromAddress = accounts[0];
-			contract.methods.addUser(name).send({ from: fromAddress })
+			contract.methods.createCertificate(name).send({ from: fromAddress, gas: 200000 })
 				.then((result) => {
 					console.log(result);
 					//print only transcation hash
@@ -174,10 +238,8 @@ loadAccounts()
 		});
 	})
 	.catch((error) => {
-		// Handle errors loading Ethereum accounts
+	
 	});
 
-//getting the certificate from the blockchain and firebase
-// id="certificateOutput"
 
 

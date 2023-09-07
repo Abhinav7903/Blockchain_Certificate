@@ -11,6 +11,9 @@ header {
     color: white;
 }
 
+nav{
+    position: sticky;
+}
 nav ul {
     list-style: none;
     padding: 1rem;
