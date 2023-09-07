@@ -1,4 +1,4 @@
-### <a href="https://abhinav7903.github.io/Blockchain_Certificate/"> Demo</a>
+### <a href="https://abhinav7903.github.io/Blockchain_Certificate/" target="blank"> Demo</a>
 
 # Blockchain Certificate Generation using Web3.js and MetaMask
 
