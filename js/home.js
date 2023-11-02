@@ -144,7 +144,7 @@ const contractABI =[
 			{
 				"internalType": "string",
 				"name": "name",
-				"type": "string" 
+				"type": "string"
 			}
 		],
 		"name": "createCertificate",
